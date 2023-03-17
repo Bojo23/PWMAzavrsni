@@ -1,6 +1,7 @@
 <?php
 
-
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\BasketController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\authController;
 use Illuminate\Http\Request;
@@ -18,14 +19,34 @@ use Illuminate\Support\Facades\Route;
 */
 //Route::resource('products',ProductController::class);
 
-//Javne rute
+
+//Javne rute za login i register
 Route::post('/register',[authController::class,'register']);
 Route::post('/login',[authController::class,'login']);
+
+
+//Javne rute za proizvod
 Route::get('/products',[ProductController::class,'index']);
 Route::get('/products/{id}',[ProductController::class,'show']);
 Route::get('/products/search/{name}',[ProductController::class,'search']);
+Route::get('/products123',[ProductController::class,' priceGreaterThan10']);
+
+//Javne rute za basket
+Route::post('/baskets',[BasketController::class,'store']);
+Route::get('/baskets',[BasketController::class,'index']);
+Route::delete('/baskets/{id}',[BasketController::class,'destroy']);
+Route::put('/baskets/{id}',[BasketController::class,'update']);
+Route::get('/baskets/{id}',[BasketController::class,'show']);
 
 
+//Javne rute za grupe
+Route::post('/grupas',[GroupController::class,'store']);
+Route::get('/grupas',[GroupController::class,'index']);
+Route::delete('/grupas/{id}',[GroupController::class,'destroy']);
+Route::put('/grupas/{id}',[GroupController::class,'update']);
+Route::get('/grupas/{id}',[GroupController::class,'show']);
+
+Route::get('/productscount/{group_id}',[ProductController::class,'countProducts']);
 
 //Zasticene rute
 Route::group(['middleware' =>['auth:sanctum']], function () {

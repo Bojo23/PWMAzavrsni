@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,9 @@ class ProductController extends Controller
     public function index()
     {
         return Product::all();
+
+         
+      
     }
 
     /**
@@ -25,7 +29,16 @@ class ProductController extends Controller
             'slug'=>'required',
             'price'=>'required'
         ]);
-        return Product::create($request->all());
+        //return Product::create($request->all());
+
+        $data = Product::insert([
+            'group_id' => $request->group_id,
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'description' => $request->description,
+            'price' => $request->price
+            
+        ]);
     }
 
     /**
@@ -64,4 +77,47 @@ class ProductController extends Controller
     {
        return Product::where('name','like','%'.$name.'%')->get();
     }
+
+
+    public function priceGreaterThan10(){
+
+        $product = DB::table('product')
+       
+       -> where ('price' ,'>=','10')
+       ->get();
+
+    }
+    public function countProducts(Request $request)
+    {
+        $data = DB::table('baskets')
+            ->join('products', 'baskets.product_id', '=', 'products.id')
+            ->join('grupas', 'products.group_id', '=', 'grupas.id')
+            ->where('baskets.datetime', '>=', $request->date_from)
+            ->where('baskets.datetime', '<=', $request->date_to)
+            ->select('grupas.name', DB::raw('SUM(baskets.count) as count'))
+            ->groupBy('grupas.name')
+            ->get();
+    
+        $grid = [];
+    
+        foreach ($data as $row) {
+            $grid[] = [
+                'Grupa' => $row->name,
+                'Broj' => $row->count,
+            ];
+        }
+    
+        return $grid;
+    }
+    
+        
+
+
 }
+
+
+
+
+
+
+

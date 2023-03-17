@@ -10,9 +10,16 @@ class Product extends Model
     use HasFactory;
     
     protected $fillable = [
+        'group_id',
         'name',
         'slug',
         'description',
         'price'
     ];
+
+  
+public function grupas(){
+    return $this->hasOne(Grupa::class);
+}
+
 }
